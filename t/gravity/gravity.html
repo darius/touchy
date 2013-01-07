@@ -1,0 +1,22 @@
+<!doctype html>
+<canvas id="canvas1" width="800", height="800">
+</canvas>
+
+<script type="text/javascript">
+// file:///Users/darius/git/pending/canvas/gravity.html
+
+var element = document.getElementById("canvas1");
+var width = parseInt(element.getAttribute("width"));
+var height = parseInt(element.getAttribute("height"));
+var ctx = element.getContext("2d");
+
+function draw() {
+    step();
+}
+</script>
+
+
+<script src="gravity.js"></script>
+<script>
+setInterval(draw, 0);
+</script>
