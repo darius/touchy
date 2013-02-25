@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+</head>
+<body>
+  <canvas id="canvas1" width="800" height="800" style="border: none; background-color: pink;">
+    Random Canvas
+  </canvas>
+
+  <script type="text/javascript">
+
+var element = document.getElementById("canvas1");
+var width   = parseInt(element.getAttribute("width"));
+var height  = parseInt(element.getAttribute("height"));
+var ctx     = element.getContext("2d");
+
+  </script>
+
+  <script src="irrational_triangle.js"></script>
+  <script type="text/javascript">
+    irrationalTriangle(ctx, width, height);
+  </script>
+</body>
