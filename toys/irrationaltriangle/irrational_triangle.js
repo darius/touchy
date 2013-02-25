@@ -2,7 +2,7 @@ function irrationalTriangle(ctx, width, height) {
     var size = Math.min(width, height);
     var sqrt3 = Math.sqrt(3);
     var h = (1 - sqrt3/2) / 2;
-    var colors = ['rgba(0,128,192,0.25)', 'rgba(0,128,192,0.5)', 'rgba(0,128,192,0.9)', 'rgba(0,64,96,0.99)',];
+    var colors = ['rgba(0,128,192,0.25)', 'rgba(0,128,192,0.5)', 'rgba(0,120,180,0.9)', 'rgba(0,80,120,0.99)',];
 
     construct([{x: .5, y: h+sqrt3/2},
                {x: 0,  y: h},
