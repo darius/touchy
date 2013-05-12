@@ -1,8 +1,8 @@
 // TODO
 //  leapfrog or something, not forward euler
 
-var tx = 3/5;   // (tx,ty) is a unit vector, the sail's attitude
-var ty = 4/5;
+var x_sail = 3/5;   // (x_sail,y_sail) is a unit vector, the sail's attitude
+var y_sail = 4/5;
 
 // Find the canvas top-left.
 var canvasLeft = 0, canvasTop = 0;
@@ -18,43 +18,41 @@ var mouseX = 0, mouseY = 0;
 canvas.addEventListener('mousemove', function(event) {
     mouseX = event.clientX - canvasLeft;
     mouseY = event.clientY - canvasTop;
-    tx = mouseX - width/2;
-    ty = height/2 - mouseY;
-    var norm = Math.sqrt(tx*tx + ty*ty);
-    tx /= norm, ty /= norm;     // XXX divide by 0
+    x_sail = mouseX - width/2;
+    y_sail = height/2 - mouseY;
+    var norm = Math.sqrt(x_sail*x_sail + y_sail*y_sail);
+    x_sail /= norm, y_sail /= norm;     // XXX divide by 0
 });
 
 var x = 1, y = 0;
 var vx = 0, vy = 1;
 var G = 1;
 var M = 1;
-var dt = 0.02;
-var pressureScale = 5e-2;  // fill me in
+var pressureScale = 5e-2;
+var dt = 0.01;
 var tau = 2 * Math.PI;
 
 function step() {
-    // F = GMmr/r^3
-    // r'' = GM r/r^3
     var r2 = x*x + y*y;
 
-    // Gravity
-    var gr = G * Math.pow(r2, -1.5);
-    var Mgr = -M * gr;
-    var ax = Mgr * x;
-    var ay = Mgr * y;
+    // Gravity: r'' = F/m = -GM r/r^3
+    var Mgr3 = (-G*M) * Math.pow(r2, -1.5);
+    var ax_g = Mgr3 * x;
+    var ay_g = Mgr3 * y;
 
     // Light pressure
-    var pressure = tx * -y - ty * -x;
-//    pressure = Math.abs(pressure); // back side is also reflective
-    pressure *= pressureScale / r2;
-    ax += pressure * ty;   // directed along the normal
-    ay -= pressure * tx;
+    var pressure = (x_sail * y - y_sail * x) * -pressureScale / r2;
+    var ax_p = pressure * y_sail;   // directed along the normal
+    var ay_p = pressure * -x_sail;
 
-    // Motion
-    x += vx * dt, y += vy * dt;
-    vx += ax * dt, vy += ay * dt;
+    // Motion: http://en.wikipedia.org/wiki/Symplectic_Euler_method
+    // to get a stable orbit when pressure == 0.
+    vx += (ax_g + ax_p) * dt;
+    vy += (ay_g + ay_p) * dt;
+    x += vx * dt;
+    y += vy * dt;
     if (false) console.log('x ' + x + ', y ' + y);
-    plotMe({x: Mgr*x, y: Mgr*y}, {x: pressure * ty, y: pressure * -tx});
+    plotMe({x: ax_g, y: ay_g}, {x: ax_p, y: ay_p});
 }
 
 var xscale = 4; // -xscale..xscale is visible, in world coords
@@ -69,8 +67,8 @@ function plotMe(ag, ap) {
     ctx.fill();
     var cx = width/2 * (1 + x/xscale);  // canvas coords
     var cy = height/2 * (1 - y/yscale);
-    var atx = 10 * tx;
-    var aty = -10 * ty;
+    var atx = 10 * x_sail;
+    var aty = -10 * y_sail;
     drawLine({x: cx-atx, y: cy-aty},
              {x: cx+atx, y: cy+aty},
              'white');
