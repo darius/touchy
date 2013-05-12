@@ -5,6 +5,15 @@
 <script type="text/javascript">
 // file:///Users/darius/git/pending/canvas/gravity.html
 
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          function(callback) {
+            window.setTimeout(callback, 1000 / 60);
+          };
+})();
+
 var element = document.getElementById("canvas1");
 var width = parseInt(element.getAttribute("width"));
 var height = parseInt(element.getAttribute("height"));
@@ -12,11 +21,13 @@ var ctx = element.getContext("2d");
 
 function draw() {
     step();
+    requestAnimFrame(draw);
 }
+
 </script>
 
 
 <script src="gravity.js"></script>
 <script>
-setInterval(draw, 0);
+requestAnimFrame(draw);
 </script>
