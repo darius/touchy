@@ -33,6 +33,7 @@ var M = 1;
 var pressureScale = 5e-2;
 var dt = 0.01;
 var tau = 2 * Math.PI;
+var forceScale = 300;
 
 var x_trail = new Array(2000);
 var y_trail = new Array(2000);
@@ -95,10 +96,10 @@ function plotMe(ag, ap) {
              'white');
     if (false) console.log(ag, ap);
     drawLine({x: cx, y: cy},
-             {x: cx+ag.x*100, y: cy-ag.y*100},
+             {x: cx+ag.x*forceScale, y: cy-ag.y*forceScale},
              'yellow');
     drawLine({x: cx, y: cy},
-             {x: cx+ap.x*100, y: cy-ap.y*100},
+             {x: cx+ap.x*forceScale, y: cy-ap.y*forceScale},
              'yellow');
 
     ctx.fillStyle = 'blue';
