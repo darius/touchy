@@ -1,6 +1,3 @@
-// TODO
-//  leapfrog or something, not forward euler
-
 var x_sail = 3/5;   // (x_sail,y_sail) is a unit vector, the sail's attitude
 var y_sail = 4/5;
 
@@ -18,10 +15,13 @@ var mouseX = 0, mouseY = 0;
 canvas.addEventListener('mousemove', function(event) {
     mouseX = event.clientX - canvasLeft;
     mouseY = event.clientY - canvasTop;
-    x_sail = mouseX - width/2;
-    y_sail = height/2 - mouseY;
-    var norm = Math.sqrt(x_sail*x_sail + y_sail*y_sail);
-    x_sail /= norm, y_sail /= norm;     // XXX divide by 0
+    var x_rel = mouseX - width/2;
+    var y_rel = height/2 - mouseY;
+    var norm = Math.sqrt(x_rel*x_rel + y_rel*y_rel);
+    if (norm !== 0) {
+        x_sail = x_rel / norm;
+        y_sail = y_rel / norm;
+    }
 });
 
 var x = 1, y = 0;
