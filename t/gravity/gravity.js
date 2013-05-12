@@ -26,15 +26,21 @@ canvas.addEventListener('mousemove', function(event) {
 
 var x = 1, y = 0;
 var vx = 0, vy = 1;
-var x_planet = 1.5, y_planet = 0;
-var vx_planet = 0, vy_planet = 0.75;
+var x_planet = 3, y_planet = 0;
+var vx_planet = 0, vy_planet = 0.6;
 var G = 1;
 var M = 1;
 var pressureScale = 5e-2;
 var dt = 0.01;
 var tau = 2 * Math.PI;
 
+var x_trail = new Array(2000);
+var y_trail = new Array(2000);
+var trailAt = 0;
+var nsteps = 0;
+
 function step() {
+    ++nsteps;
     var r2 = x*x + y*y;
 
     // Gravity: r'' = F/m = -GM r/r^3
@@ -90,14 +96,24 @@ function plotMe(ag, ap) {
     if (false) console.log(ag, ap);
     drawLine({x: cx, y: cy},
              {x: cx+ag.x*100, y: cy-ag.y*100},
-             'red');
+             'yellow');
     drawLine({x: cx, y: cy},
              {x: cx+ap.x*100, y: cy-ap.y*100},
              'yellow');
 
+    ctx.fillStyle = 'blue';
+    for (var i = 0; i < x_trail.length; ++i) {
+        ctx.beginPath();
+        ctx.arc(x_trail[i], y_trail[i], 0.5, tau, false);
+        ctx.fill();
+    }
     cx = width/2 * (1 + x_planet/xscale);  // canvas coords
     cy = height/2 * (1 - y_planet/yscale);
-    ctx.fillStyle = 'blue';
+    if (nsteps % 1 === 0) {
+        x_trail[trailAt] = cx;
+        y_trail[trailAt] = cy;
+        trailAt = (trailAt + 1) % x_trail.length;
+    }
     ctx.beginPath();
     ctx.arc(cx, cy, 4, tau, false);
     ctx.fill();
