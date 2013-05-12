@@ -6,6 +6,7 @@ var vx = 0, vy = 1;
 var G = 1;
 var M = 1;
 var dt = 0.02;
+var tau = 2 * Math.PI;
 
 function step() {
     // F = GMmr/r^3
@@ -29,7 +30,7 @@ function plotMe() {
     ctx.fillRect(0, 0, width, height);
     ctx.fillStyle = 'yellow';
     ctx.beginPath();
-    ctx.arc(width/2, height/2, 8, 2*Math.PI, false);
+    ctx.arc(width/2, height/2, 8, tau, false);
     ctx.fill();
     var cx = width/2 * (1 + x/xscale);  // canvas coords
     var cy = height/2 * (1 + y/yscale);
