@@ -19,6 +19,8 @@ canvas.addEventListener('mousemove', function(event) {
     var y_rel = height/2 - mouseY;
     var norm = Math.sqrt(x_rel*x_rel + y_rel*y_rel);
     if (norm !== 0) {
+        // Unit vector in the same direction as from the canvas center
+        // to the mouse.
         x_sail = x_rel / norm;
         y_sail = y_rel / norm;
     }
