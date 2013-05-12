@@ -6,20 +6,32 @@ var vx = 0, vy = 1;
 var G = 1;
 var M = 1;
 var dt = 0.02;
+var pressureScale = 5e-2;  // fill me in
 var tau = 2 * Math.PI;
 
 function step() {
     // F = GMmr/r^3
     // r'' = GM r/r^3
     var r2 = x*x + y*y;
+
+    // Gravity
     var gr = G * Math.pow(r2, -1.5);
     var Mgr = -M * gr;
     var ax = Mgr * x;
     var ay = Mgr * y;
+
+    // Light pressure
+    var pressure = tx * -y - ty * -x;
+//    pressure = Math.abs(pressure); // back side is also reflective
+    pressure *= pressureScale / r2;
+    ax += pressure * ty;   // directed along the normal
+    ay -= pressure * tx;
+
+    // Motion
     x += vx * dt, y += vy * dt;
     vx += ax * dt, vy += ay * dt;
     if (false) console.log('x ' + x + ', y ' + y);
-    plotMe();
+    plotMe({x: Mgr*x, y: Mgr*y}, {x: pressure * ty, y: pressure * -tx});
 }
 
 var xscale = 4; // -xscale..xscale is visible, in world coords
@@ -28,7 +40,7 @@ var yscale = 4;
 var tx = 3/5;   // (tx,ty) is a unit vector, the sail's attitude
 var ty = 4/5;
 
-function plotMe() {
+function plotMe(ag, ap) {
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, width, height);
     ctx.fillStyle = 'yellow';
@@ -42,6 +54,13 @@ function plotMe() {
     drawLine({x: cx-atx, y: cy-aty},
              {x: cx+atx, y: cy+aty},
              'white');
+    if (false) console.log(ag, ap);
+    drawLine({x: cx, y: cy},
+             {x: cx+ag.x*100, y: cy-ag.y*100},
+             'red');
+    drawLine({x: cx, y: cy},
+             {x: cx+ap.x*1000, y: cy-ap.y*1000},
+             'yellow');
 }
 
 function drawLine(start, end, color) {
