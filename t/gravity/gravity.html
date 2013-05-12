@@ -14,10 +14,10 @@ window.requestAnimFrame = (function(){
           };
 })();
 
-var element = document.getElementById("canvas1");
-var width = parseInt(element.getAttribute("width"));
-var height = parseInt(element.getAttribute("height"));
-var ctx = element.getContext("2d");
+var canvas = document.getElementById("canvas1");
+var width = parseInt(canvas.getAttribute("width"));
+var height = parseInt(canvas.getAttribute("height"));
+var ctx = canvas.getContext("2d");
 
 function draw() {
     step();

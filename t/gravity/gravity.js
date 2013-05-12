@@ -1,6 +1,29 @@
 // TODO
 //  leapfrog or something, not forward euler
 
+var tx = 3/5;   // (tx,ty) is a unit vector, the sail's attitude
+var ty = 4/5;
+
+// Find the canvas top-left.
+var canvasLeft = 0, canvasTop = 0;
+(function() {
+    for (var element = canvas; element !== null; element = element.offsetParent) {
+        canvasLeft += element.offsetLeft;
+        canvasTop  += element.offsetTop;
+    }
+})();
+
+// Track the mouse coordinates relative to canvas top-left.
+var mouseX = 0, mouseY = 0;
+canvas.addEventListener('mousemove', function(event) {
+    mouseX = event.clientX - canvasLeft;
+    mouseY = event.clientY - canvasTop;
+    tx = mouseX - width/2;
+    ty = height/2 - mouseY;
+    var norm = Math.sqrt(tx*tx + ty*ty);
+    tx /= norm, ty /= norm;     // XXX divide by 0
+});
+
 var x = 1, y = 0;
 var vx = 0, vy = 1;
 var G = 1;
@@ -36,9 +59,6 @@ function step() {
 
 var xscale = 4; // -xscale..xscale is visible, in world coords
 var yscale = 4;
-
-var tx = 3/5;   // (tx,ty) is a unit vector, the sail's attitude
-var ty = 4/5;
 
 function plotMe(ag, ap) {
     ctx.fillStyle = 'black';
