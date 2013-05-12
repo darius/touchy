@@ -17,7 +17,7 @@ function step() {
     var ay = Mgr * y;
     x += vx * dt, y += vy * dt;
     vx += ax * dt, vy += ay * dt;
-    console.log('x ' + x + ', y ' + y);
+    if (false) console.log('x ' + x + ', y ' + y);
     plotMe();
 }
 
