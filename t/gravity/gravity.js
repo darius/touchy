@@ -34,7 +34,7 @@ function plotMe() {
     ctx.fill();
     var cx = width/2 * (1 + x/xscale);  // canvas coords
     var cy = height/2 * (1 + y/yscale);
-    drawLine({x: cx-10, y: cy-5}, {x: cx+5, y:cy+10}, 'white');
+    drawLine({x: cx-10, y: cy-5}, {x: cx+10, y:cy+5}, 'white');
 }
 
 function drawLine(start, end, color) {
