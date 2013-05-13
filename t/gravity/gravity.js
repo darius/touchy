@@ -75,7 +75,6 @@ function step() {
     vy += (ay_g + ay_p) * dt;
     x += vx * dt;
     y += vy * dt;
-    if (false) console.log('x ' + x + ', y ' + y);
 
     // Gravity and motion for the planet
     var r2_p = x_planet*x_planet + y_planet*y_planet;
@@ -109,7 +108,6 @@ function plotMe(x_sail, y_sail, ag, ap) {
     drawLine({x: cx-atx, y: cy-aty},
              {x: cx+atx, y: cy+aty},
              'white');
-    if (false) console.log(ag, ap);
     drawLine({x: cx, y: cy},
              {x: cx+ag.x*forceScale, y: cy-ag.y*forceScale},
              'yellow');
@@ -136,8 +134,6 @@ function plotMe(x_sail, y_sail, ag, ap) {
 }
 
 function drawLine(start, end, color) {
-    if (false) report(' ' + start.x + ',' + start.y
-                      + ' -> ' + end.x + ',' + end.y + ' / ' + color);
     ctx.strokeStyle = color;
     ctx.beginPath();
     ctx.moveTo(start.x, start.y);
