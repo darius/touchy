@@ -1,7 +1,9 @@
 var x_sail = 3/5;   // (x_sail,y_sail) is a unit vector, the sail's attitude
 var y_sail = 4/5;
 
-// Find the canvas top-left.
+var x_sun = width/2;
+var y_sun = height/2;
+// Find the canvas top-left.  XXX simpler way?
 var canvasLeft = 0, canvasTop = 0;
 (function() {
     for (var element = canvas; element !== null; element = element.offsetParent) {
@@ -10,13 +12,12 @@ var canvasLeft = 0, canvasTop = 0;
     }
 })();
 
-// Track the mouse coordinates relative to canvas top-left.
-var mouseX = 0, mouseY = 0;
-canvas.addEventListener('mousemove', function(event) {
-    mouseX = event.clientX - canvasLeft;
-    mouseY = event.clientY - canvasTop;
-    var x_rel = mouseX - width/2;
-    var y_rel = height/2 - mouseY;
+// Track the mouse.
+document.addEventListener('mousemove', function(event) {
+    // Mouse coords relative to the canvas center (in a right-handed
+    // coordinate system).
+    var x_rel = event.clientX - (canvasLeft + x_sun);
+    var y_rel = (canvasTop + y_sun) - event.clientY;
     var norm = Math.sqrt(x_rel*x_rel + y_rel*y_rel);
     if (norm !== 0) {
         // Unit vector in the same direction as from the canvas center
