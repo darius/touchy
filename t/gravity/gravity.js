@@ -1,11 +1,15 @@
 'use strict';
 
 function animLoop(render) {
-    function loop() {
-        if (!render())
-            requestAnimFrame(loop);
-    }
-    requestAnimFrame(loop);
+    requestAnimFrame(function(then) {
+        function loop(now) {
+            if (!render(now - then, now))
+                requestAnimFrame(loop);
+            then = now;
+        }
+        if (!render(0, then))
+            requestAnimFrame(loop)
+    });
 }
 
 var x_sun = width/2;
@@ -38,7 +42,6 @@ var vx_planet = 0, vy_planet = 0.6;
 var G = 1;
 var M = 1;
 var pressureScale = 30e-2;
-var dt = 0.01;
 var tau = 2 * Math.PI;
 var forceScale = 300;
 
@@ -47,7 +50,8 @@ var y_trail = new Array(2000);
 var trailAt = 0;
 var nsteps = 0;
 
-function step() {
+function step(timeInterval) {
+    var dt = 0.01 * timeInterval / (1000/60);
     ++nsteps;
 
     // Compute the sail's tilt.
