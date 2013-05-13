@@ -93,12 +93,15 @@ var xscale = 4; // -xscale..xscale is visible, in world coords
 var yscale = 4;
 
 function plotMe(x_sail, y_sail, ag, ap) {
+    // Outer space
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, width, height);
 
+    // The sun
     ctx.fillStyle = 'yellow';
     fillCircle(width/2, height/2, 8);
 
+    // The sail and the forces on it
     var cx = width/2 * (1 + x/xscale);  // canvas coords
     var cy = height/2 * (1 - y/yscale);
     var atx = 10 * x_sail;
@@ -113,6 +116,7 @@ function plotMe(x_sail, y_sail, ag, ap) {
              {x: cx+ap.x*forceScale, y: cy-ap.y*forceScale},
              'yellow');
 
+    // The planet and its trail
     ctx.fillStyle = 'blue';
     for (var i = 0; i < x_trail.length; ++i)
         fillCircle(x_trail[i], y_trail[i], 0.5);
