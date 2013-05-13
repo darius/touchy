@@ -12,7 +12,7 @@ var canvasLeft = 0, canvasTop = 0;
 
 // Track the mouse.
 var x_rel = 0;
-var y_rel = 0;
+var y_rel = 1;
 document.addEventListener('mousemove', function(event) {
     // Mouse coords relative to the canvas center (in a right-handed
     // coordinate system). We're only going to use the direction; we
