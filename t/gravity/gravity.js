@@ -52,7 +52,8 @@ function step() {
     var ay_g = Mgr3 * y;
 
     // Light pressure
-    var pressure = (-pressureScale * Math.pow(x_sail * y - y_sail * x, 2)
+    var along = x_sail * y - y_sail * x;
+    var pressure = (-pressureScale * along * Math.abs(along)
                     / (r2*r2));
     var ax_p = pressure * y_sail;   // directed along the normal
     var ay_p = pressure * -x_sail;
