@@ -1,8 +1,6 @@
-var x_sail = 3/5;   // (x_sail,y_sail) is a unit vector, the sail's attitude
-var y_sail = 4/5;
-
 var x_sun = width/2;
 var y_sun = height/2;
+
 // Find the canvas top-left.  XXX simpler way?
 var canvasLeft = 0, canvasTop = 0;
 (function() {
@@ -13,18 +11,14 @@ var canvasLeft = 0, canvasTop = 0;
 })();
 
 // Track the mouse.
+var x_rel = 0;
+var y_rel = 0;
 document.addEventListener('mousemove', function(event) {
     // Mouse coords relative to the canvas center (in a right-handed
-    // coordinate system).
-    var x_rel = event.clientX - (canvasLeft + x_sun);
-    var y_rel = (canvasTop + y_sun) - event.clientY;
-    var norm = Math.sqrt(x_rel*x_rel + y_rel*y_rel);
-    if (norm !== 0) {
-        // Unit vector in the same direction as from the canvas center
-        // to the mouse.
-        x_sail = x_rel / norm;
-        y_sail = y_rel / norm;
-    }
+    // coordinate system). We're only going to use the direction; we
+    // don't care about the magnitude.
+    x_rel = event.clientX - (canvasLeft + x_sun);
+    y_rel = (canvasTop + y_sun) - event.clientY;
 });
 
 var x = 1, y = 0;
@@ -33,7 +27,7 @@ var x_planet = 3, y_planet = 0;
 var vx_planet = 0, vy_planet = 0.6;
 var G = 1;
 var M = 1;
-var pressureScale = 10e-2;
+var pressureScale = 20e-2;
 var dt = 0.01;
 var tau = 2 * Math.PI;
 var forceScale = 300;
@@ -45,6 +39,22 @@ var nsteps = 0;
 
 function step() {
     ++nsteps;
+
+    // Compute the sail's tilt.
+    var x_sail = 1;
+    var y_sail = 0;
+    // Rotate (x_rel,y_rel) relative to the sail's offset from the sun.
+    // We're going to normalize the magnitude, so to rotate we can just
+    // multiply complex numbers; no need to extract and add angles.
+    // (x+yi)*(u+vi)*i = -(xv+yu) + (xu-yv)i
+    var x_tilt = -(x*y_rel + y*x_rel);
+    var y_tilt = x*x_rel - y*y_rel;
+    var norm = Math.sqrt(x_tilt*x_tilt + y_tilt*y_tilt);
+    if (norm !== 0) { // Make it a unit vector.
+        x_sail = x_tilt / norm;
+        y_sail = y_tilt / norm;
+    }
+
     var r2 = x*x + y*y;
 
     // Gravity: r'' = F/m = -GM r/r^3
@@ -77,13 +87,13 @@ function step() {
     x_planet += vx_planet * dt;
     y_planet += vy_planet * dt;
 
-    plotMe({x: ax_g, y: ay_g}, {x: ax_p, y: ay_p}, {x: ax_gp, y: ay_gp});
+    plotMe(x_sail, y_sail, {x: ax_g, y: ay_g}, {x: ax_p, y: ay_p}, {x: ax_gp, y: ay_gp});
 }
 
 var xscale = 4; // -xscale..xscale is visible, in world coords
 var yscale = 4;
 
-function plotMe(ag, ap) {
+function plotMe(x_sail, y_sail, ag, ap) {
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, width, height);
 
