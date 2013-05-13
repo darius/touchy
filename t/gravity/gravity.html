@@ -12,15 +12,12 @@ var requestAnimFrame =
    || window.mozRequestAnimationFrame
    || function(callback) { setTimeout(callback, 1000 / 60); });
 
-function animLoop(render, element) {
-    var then = Date.now();
-    function loop(now) {
-        var interval = now - then;
-        if (160 <= interval || render(interval) !== false)
-            requestAnimFrame(loop, element);
-        then = now;
+function animLoop(render) {
+    function loop() {
+        if (!render())
+            requestAnimFrame(loop);
     }
-    loop(then);
+    requestAnimFrame(loop);
 }
 
 var canvas = document.getElementById("canvas1");
@@ -28,17 +25,10 @@ var width = parseInt(canvas.getAttribute("width"));
 var height = parseInt(canvas.getAttribute("height"));
 var ctx = canvas.getContext("2d");
 
-function draw() {
-    step();
-//    requestAnimFrame(draw, canvas);
-}
-
 </script>
 
 
 <script src="gravity.js"></script>
 <script>
-animLoop(draw, canvas);
-
-//requestAnimFrame(draw, canvas);
+animLoop(step);
 </script>
