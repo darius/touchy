@@ -97,7 +97,7 @@ function plotMe(x_sail, y_sail, ag, ap) {
     ctx.fillRect(0, 0, width, height);
 
     ctx.fillStyle = 'yellow';
-    drawCircle(width/2, height/2, 8);
+    fillCircle(width/2, height/2, 8);
 
     var cx = width/2 * (1 + x/xscale);  // canvas coords
     var cy = height/2 * (1 - y/yscale);
@@ -115,7 +115,7 @@ function plotMe(x_sail, y_sail, ag, ap) {
 
     ctx.fillStyle = 'blue';
     for (var i = 0; i < x_trail.length; ++i)
-        drawCircle(x_trail[i], y_trail[i], 0.5);
+        fillCircle(x_trail[i], y_trail[i], 0.5);
     cx = width/2 * (1 + x_planet/xscale);  // canvas coords
     cy = height/2 * (1 - y_planet/yscale);
     if (nsteps % 1 === 0) {
@@ -123,10 +123,10 @@ function plotMe(x_sail, y_sail, ag, ap) {
         y_trail[trailAt] = cy;
         trailAt = (trailAt + 1) % x_trail.length;
     }
-    drawCircle(cx, cy, 4);
+    fillCircle(cx, cy, 4);
 }
 
-function drawCircle(cx, cy, radius) {
+function fillCircle(cx, cy, radius) {
     ctx.beginPath();
     ctx.arc(cx, cy, radius, tau, false);
     ctx.fill();
