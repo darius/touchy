@@ -32,7 +32,7 @@ var x_planet = 3, y_planet = 0;
 var vx_planet = 0, vy_planet = 0.6;
 var G = 1;
 var M = 1;
-var pressureScale = 5e-2;
+var pressureScale = 10e-2;
 var dt = 0.01;
 var tau = 2 * Math.PI;
 var forceScale = 300;
@@ -52,7 +52,8 @@ function step() {
     var ay_g = Mgr3 * y;
 
     // Light pressure
-    var pressure = (x_sail * y - y_sail * x) * -pressureScale / r2;
+    var pressure = (-pressureScale * Math.pow(x_sail * y - y_sail * x, 2)
+                    / (r2*r2));
     var ax_p = pressure * y_sail;   // directed along the normal
     var ay_p = pressure * -x_sail;
 
