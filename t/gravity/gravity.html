@@ -3,14 +3,11 @@
 </canvas>
 
 <script type="text/javascript">
-window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          function(callback) {
-            window.setTimeout(callback, 1000 / 60);
-          };
-})();
+var requestAnimFrame = 
+  (   window.requestAnimationFrame
+   || window.webkitRequestAnimationFrame
+   || window.mozRequestAnimationFrame
+   || function(callback) { setTimeout(callback, 1000 / 60); });
 
 var canvas = document.getElementById("canvas1");
 var width = parseInt(canvas.getAttribute("width"));
@@ -19,7 +16,7 @@ var ctx = canvas.getContext("2d");
 
 function draw() {
     step();
-    requestAnimFrame(draw);
+    requestAnimFrame(draw, canvas);
 }
 
 </script>
@@ -27,5 +24,5 @@ function draw() {
 
 <script src="gravity.js"></script>
 <script>
-requestAnimFrame(draw);
+requestAnimFrame(draw, canvas);
 </script>
