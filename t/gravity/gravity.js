@@ -27,7 +27,7 @@ var x_planet = 3, y_planet = 0;
 var vx_planet = 0, vy_planet = 0.6;
 var G = 1;
 var M = 1;
-var pressureScale = 20e-2;
+var pressureScale = 30e-2;
 var dt = 0.01;
 var tau = 2 * Math.PI;
 var forceScale = 300;
