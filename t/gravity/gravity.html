@@ -12,14 +12,6 @@ var requestAnimFrame =
    || window.mozRequestAnimationFrame
    || function(callback) { setTimeout(callback, 1000 / 60); });
 
-function animLoop(render) {
-    function loop() {
-        if (!render())
-            requestAnimFrame(loop);
-    }
-    requestAnimFrame(loop);
-}
-
 var canvas = document.getElementById("canvas1");
 var width = parseInt(canvas.getAttribute("width"));
 var height = parseInt(canvas.getAttribute("height"));

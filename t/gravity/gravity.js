@@ -1,3 +1,13 @@
+'use strict';
+
+function animLoop(render) {
+    function loop() {
+        if (!render())
+            requestAnimFrame(loop);
+    }
+    requestAnimFrame(loop);
+}
+
 var x_sun = width/2;
 var y_sun = height/2;
 
