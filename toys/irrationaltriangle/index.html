@@ -3,18 +3,12 @@
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 </head>
 <body>
-  <canvas id="canvas1" width="800" height="800" style="border: none; background-color: pink;">
-    Random Canvas
+  <canvas id="canvas" width="800" height="800" style="border: none; background-color: pink;">
+    Unsupported: canvas.
   </canvas>
-
-  <script type="text/javascript">
-    var element = document.getElementById("canvas1");
-    var width   = element.width;
-    var height  = element.height;
-    var ctx     = element.getContext("2d");
-  </script>
   <script src="irrational_triangle.js"></script>
   <script type="text/javascript">
-    irrationalTriangle(ctx, width, height);
+    var canvas = document.getElementById("canvas");
+    irrationalTriangle(canvas.getContext("2d"), canvas.width, canvas.height);
   </script>
 </body>
