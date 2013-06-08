@@ -3,21 +3,19 @@
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 </head>
 <body>
-  <canvas id="canvas1" width="800" height="800" style="border: 1px
+  <canvas id="canvas" width="800" height="800" style="border: 1px
     solid black; background-color: black;">
-    Random Canvas
+    Unsupported: canvas
   </canvas>
 
   <script type="text/javascript">
+    var element = document.getElementById("canvas");
+    var width   = element.width;
+    var height  = element.height;
+    var ctx     = element.getContext("2d");
 
-var element = document.getElementById("canvas1");
-var width = parseInt(element.getAttribute("width"));
-var height = parseInt(element.getAttribute("height"));
-var ctx = element.getContext("2d");
-
-var xscale = width / 4;
-var yscale = height / 4;
-
+    var xscale = width / 4;
+    var yscale = height / 4;
   </script>
 
   <script src="compassconstructions.js"></script>
