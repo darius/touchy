@@ -1,9 +1,15 @@
 <!doctype html>
+<h1>Solar sail simulation</h1>
 <canvas id="canvas1" width="800", height="800">
 </canvas>
-<p>Move your mouse to tilt the sail. The lines show the forces on it
-(gravity and light pressure). The blue planet is just scenery, for
-now.
+<p>Move your mouse to tilt the sail. The sail automatically adjusts to
+preserve relative orientation to the Sun when you stop moving the mouse. The lines
+show the forces on it (gravity and light pressure). The blue planet is just scenery.
+Click the mouse to furl/unfurl the sail. The red ellipse shows your orbit.
+</p>
+
+<p>Adapted from the <a href="https://github.com/darius/touchy/tree/master/t/gravity">simulation</a>
+by Darius Bacon.</p>
 
 <script type="text/javascript">
 var requestAnimFrame = 
@@ -16,9 +22,7 @@ var canvas = document.getElementById("canvas1");
 var width = parseInt(canvas.getAttribute("width"));
 var height = parseInt(canvas.getAttribute("height"));
 var ctx = canvas.getContext("2d");
-
 </script>
-
 
 <script src="gravity.js"></script>
 <script>

@@ -14,6 +14,7 @@ function animLoop(render) {
 
 var x_sun = width/2;
 var y_sun = height/2;
+var sail_active = true;
 
 // Find the canvas top-left.  XXX simpler way?
 var canvasLeft = 0, canvasTop = 0;
@@ -34,6 +35,9 @@ document.addEventListener('mousemove', function(event) {
     x_rel = event.clientX - (canvasLeft + x_sun);
     y_rel = (canvasTop + y_sun) - event.clientY;
 });
+document.addEventListener('click', function(event) {
+    sail_active = !sail_active;
+});
 
 var x = 1, y = 0;
 var vx = 0, vy = 1;
@@ -49,6 +53,37 @@ var x_trail = new Array(2000);
 var y_trail = new Array(2000);
 var trailAt = 0;
 var nsteps = 0;
+
+function calcGravity(x, y) {
+    var r2 = x*x + y*y;
+    // Gravity: r'' = F/m = -GM r/r^3
+    var Mgr3 = (-G*M) * Math.pow(r2, -1.5);
+    return {
+        ax_g: Mgr3 * x,
+	ay_g: Mgr3 * y
+    };
+}
+
+function plotOrbit(x, y, vx, vy, dt) {
+    var angle = Math.atan2(x, y);
+    var angle_traveled = 0;
+    var i = 0;
+    while (Math.abs(angle_traveled) < Math.PI * 2 && ++i < 5000) {
+        var grav = calcGravity(x, y);
+        vx += grav.ax_g * dt;
+        vy += grav.ay_g * dt;
+        x += vx * dt;
+        y += vy * dt;
+        var c = toCanvasCoords(x, y);
+        fillCircle(c.x, c.y, 1, 'red');
+        var new_angle = Math.atan2(x, y);
+        // Ignore the transition between positive and negative PI.
+        if (new_angle > 0 === angle > 0) {
+            angle_traveled += angle - new_angle;
+        }
+        angle = new_angle;
+    }
+}
 
 function step(timeInterval) {
     var dt = 0.01 * timeInterval / (1000/60);
@@ -69,24 +104,20 @@ function step(timeInterval) {
         y_sail = y_tilt / norm;
     }
 
-    var r2 = x*x + y*y;
-
-    // Gravity: r'' = F/m = -GM r/r^3
-    var Mgr3 = (-G*M) * Math.pow(r2, -1.5);
-    var ax_g = Mgr3 * x;
-    var ay_g = Mgr3 * y;
+    var grav = calcGravity(x, y);
 
     // Light pressure
     var along = x_sail * y - y_sail * x;
+    var r2 = x*x + y*y;
     var pressure = (-pressureScale * along * Math.abs(along)
                     / (r2*r2));
-    var ax_p = pressure * y_sail;   // directed along the normal
-    var ay_p = pressure * -x_sail;
+    var ax_p = pressure * y_sail * sail_active;   // directed along the normal
+    var ay_p = pressure * -x_sail * sail_active;
 
     // Motion: http://en.wikipedia.org/wiki/Symplectic_Euler_method
     // to get a stable orbit when pressure == 0.
-    vx += (ax_g + ax_p) * dt;
-    vy += (ay_g + ay_p) * dt;
+    vx += (grav.ax_g + ax_p) * dt;
+    vy += (grav.ay_g + ay_p) * dt;
     x += vx * dt;
     y += vy * dt;
 
@@ -100,51 +131,62 @@ function step(timeInterval) {
     x_planet += vx_planet * dt;
     y_planet += vy_planet * dt;
 
-    plotMe(x_sail, y_sail, {x: ax_g, y: ay_g}, {x: ax_p, y: ay_p}, {x: ax_gp, y: ay_gp});
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, width, height);
+    plotOrbit(x, y, vx, vy, dt);
+    plotMe(x_sail, y_sail, {x: grav.ax_g, y: grav.ay_g}, {x: ax_p, y: ay_p}, {x: ax_gp, y: ay_gp});
 }
 
 var xscale = 4; // -xscale..xscale is visible, in world coords
 var yscale = 4;
 
-function plotMe(x_sail, y_sail, ag, ap) {
-    // Outer space
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, width, height);
-
-    // The sun
-    ctx.fillStyle = 'yellow';
-    fillCircle(width/2, height/2, 8);
-
-    // The sail and the forces on it
-    var cx = width/2 * (1 + x/xscale);  // canvas coords
-    var cy = height/2 * (1 - y/yscale);
-    var atx = 10 * x_sail;
-    var aty = -10 * y_sail;
-    drawLine({x: cx-atx, y: cy-aty},
-             {x: cx+atx, y: cy+aty},
-             'white');
-    drawLine({x: cx, y: cy},
-             {x: cx+ag.x*forceScale, y: cy-ag.y*forceScale},
-             'yellow');
-    drawLine({x: cx, y: cy},
-             {x: cx+ap.x*forceScale, y: cy-ap.y*forceScale},
-             'yellow');
-
-    // The planet and its trail
-    ctx.fillStyle = 'blue';
-    for (var i = 0; i < x_trail.length; ++i)
-        fillCircle(x_trail[i], y_trail[i], 0.5);
-    cx = width/2 * (1 + x_planet/xscale);  // canvas coords
-    cy = height/2 * (1 - y_planet/yscale);
-    if (nsteps % 1 === 0) {
-        x_trail[trailAt] = cx;
-        y_trail[trailAt] = cy;
-        trailAt = (trailAt + 1) % x_trail.length;
-    }
-    fillCircle(cx, cy, 4);
+function toCanvasCoords(x, y) {
+    return {
+	x: width/2 * (1 + x/xscale),
+	y: height/2 * (1 - y/yscale)
+    };
 }
 
-function fillCircle(cx, cy, radius) {
+function plotMe(x_sail, y_sail, ag, ap) {
+    // The sun
+    fillCircle(width/2, height/2, 8, 'yellow');
+
+    var c = toCanvasCoords(x, y);
+    if (sail_active) {
+	// The sail and the forces on it
+	var atx = 10 * x_sail;
+	var aty = -10 * y_sail;
+	drawLine({x: c.x-atx, y: c.y-aty},
+	    {x: c.x+atx, y: c.y+aty},
+	    'white');
+	drawLine({x: c.x, y: c.y},
+	    {x: c.x+ag.x*forceScale, y: c.y-ag.y*forceScale},
+	    'yellow');
+	drawLine({x: c.x, y: c.y},
+	    {x: c.x+ap.x*forceScale, y: c.y-ap.y*forceScale},
+	    'yellow');
+    } else {
+        fillCircle(c.x, c.y, 2, 'white');
+    }
+
+    // The planet and its trail
+    for (var i = 0; i < x_trail.length; ++i)
+        fillCircle(x_trail[i], y_trail[i], 0.5, 'blue');
+    var pc = {
+	x: width/2 * (1 + x_planet/xscale),
+	y: height/2 * (1 - y_planet/yscale)
+    };
+    if (nsteps % 1 === 0) {
+        x_trail[trailAt] = pc.x;
+        y_trail[trailAt] = pc.y;
+        trailAt = (trailAt + 1) % x_trail.length;
+    }
+    fillCircle(pc.x, pc.y, 4, 'blue');
+}
+
+function fillCircle(cx, cy, radius, color) {
+    ctx.strokeStyle = color;
+    ctx.fillStyle = color;
     ctx.beginPath();
     ctx.arc(cx, cy, radius, tau, false);
     ctx.fill();
