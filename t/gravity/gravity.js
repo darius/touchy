@@ -68,14 +68,19 @@ function plotOrbit(x, y, vx, vy, dt) {
     var angle = Math.atan2(x, y);
     var angle_traveled = 0;
     var i = 0;
+    var c = toCanvasCoords(x, y);
+    var cx_last = c.x;
+    var cy_last = c.y;
     while (Math.abs(angle_traveled) < Math.PI * 2 && ++i < 5000) {
         var grav = calcGravity(x, y);
         vx += grav.ax_g * dt;
         vy += grav.ay_g * dt;
         x += vx * dt;
         y += vy * dt;
-        var c = toCanvasCoords(x, y);
-        fillCircle(c.x, c.y, 1, 'red');
+        c = toCanvasCoords(x, y);
+	drawLine({x: cx_last, y: cy_last}, {x: c.x, y: c.y}, 'red');
+	cx_last = c.x;
+	cy_last = c.y;
         var new_angle = Math.atan2(x, y);
         // Ignore the transition between positive and negative PI.
         if (new_angle > 0 === angle > 0) {
