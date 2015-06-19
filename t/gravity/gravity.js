@@ -16,6 +16,16 @@ var x_sun = width/2;
 var y_sun = height/2;
 var sail_active = true;
 
+// Generate background stars.
+var stars = [];
+for (var i = 0; i < 75; i++) {
+    stars.push({
+        x: Math.floor(Math.random() * width),
+        y: Math.floor(Math.random() * height),
+        size: Math.floor(Math.random() * 4 + 1) / 2
+    });
+}
+
 // Find the canvas top-left.  XXX simpler way?
 var canvasLeft = 0, canvasTop = 0;
 (function() {
@@ -60,10 +70,12 @@ function calcGravity(x, y) {
     var Mgr3 = (-G*M) * Math.pow(r2, -1.5);
     return {
         ax_g: Mgr3 * x,
-	ay_g: Mgr3 * y
+        ay_g: Mgr3 * y
     };
 }
 
+// Compute the future location of the ship for an entire orbit
+// and plot it in red.
 function plotOrbit(x, y, vx, vy, dt) {
     var angle = Math.atan2(x, y);
     var angle_traveled = 0;
@@ -71,6 +83,8 @@ function plotOrbit(x, y, vx, vy, dt) {
     var c = toCanvasCoords(x, y);
     var cx_last = c.x;
     var cy_last = c.y;
+    // Stop when we've traversed an entire orbit, or hit the 5000
+    // step cut-off.
     while (Math.abs(angle_traveled) < Math.PI * 2 && ++i < 5000) {
         var grav = calcGravity(x, y);
         vx += grav.ax_g * dt;
@@ -78,9 +92,9 @@ function plotOrbit(x, y, vx, vy, dt) {
         x += vx * dt;
         y += vy * dt;
         c = toCanvasCoords(x, y);
-	drawLine({x: cx_last, y: cy_last}, {x: c.x, y: c.y}, 'red');
-	cx_last = c.x;
-	cy_last = c.y;
+        drawLine({x: cx_last, y: cy_last}, {x: c.x, y: c.y}, 'red');
+        cx_last = c.x;
+        cy_last = c.y;
         var new_angle = Math.atan2(x, y);
         // Ignore the transition between positive and negative PI.
         if (new_angle > 0 === angle > 0) {
@@ -136,8 +150,7 @@ function step(timeInterval) {
     x_planet += vx_planet * dt;
     y_planet += vy_planet * dt;
 
-    ctx.fillStyle = 'black';
-    ctx.fillRect(0, 0, width, height);
+    drawBackground();
     plotOrbit(x, y, vx, vy, dt);
     plotMe(x_sail, y_sail, {x: grav.ax_g, y: grav.ay_g}, {x: ax_p, y: ay_p}, {x: ax_gp, y: ay_gp});
 }
@@ -147,9 +160,18 @@ var yscale = 4;
 
 function toCanvasCoords(x, y) {
     return {
-	x: width/2 * (1 + x/xscale),
-	y: height/2 * (1 - y/yscale)
+        x: width/2 * (1 + x/xscale),
+        y: height/2 * (1 - y/yscale)
     };
+}
+
+function drawBackground() {
+    ctx.fillStyle = 'black';
+    ctx.fillRect(0, 0, width, height);
+    for (var i = 0; i < stars.length; i++) {
+        var star = stars[i];
+        fillCircle(star.x, star.y, star.size, 'white');
+    }
 }
 
 function plotMe(x_sail, y_sail, ag, ap) {
@@ -158,28 +180,29 @@ function plotMe(x_sail, y_sail, ag, ap) {
 
     var c = toCanvasCoords(x, y);
     if (sail_active) {
-	// The sail and the forces on it
-	var atx = 10 * x_sail;
-	var aty = -10 * y_sail;
-	drawLine({x: c.x-atx, y: c.y-aty},
-	    {x: c.x+atx, y: c.y+aty},
-	    'white');
-	drawLine({x: c.x, y: c.y},
-	    {x: c.x+ag.x*forceScale, y: c.y-ag.y*forceScale},
-	    'yellow');
-	drawLine({x: c.x, y: c.y},
-	    {x: c.x+ap.x*forceScale, y: c.y-ap.y*forceScale},
-	    'yellow');
+        // The sail and the forces on it
+        var atx = 10 * x_sail;
+        var aty = -10 * y_sail;
+        drawLine({x: c.x-atx, y: c.y-aty},
+            {x: c.x+atx, y: c.y+aty},
+            'white');
+        drawLine({x: c.x, y: c.y},
+            {x: c.x+ag.x*forceScale, y: c.y-ag.y*forceScale},
+            'yellow');
+        drawLine({x: c.x, y: c.y},
+            {x: c.x+ap.x*forceScale, y: c.y-ap.y*forceScale},
+            'yellow');
     } else {
         fillCircle(c.x, c.y, 2, 'white');
     }
 
     // The planet and its trail
-    for (var i = 0; i < x_trail.length; ++i)
+    for (var i = 0; i < x_trail.length; ++i) {
         fillCircle(x_trail[i], y_trail[i], 0.5, 'blue');
+    }
     var pc = {
-	x: width/2 * (1 + x_planet/xscale),
-	y: height/2 * (1 - y_planet/yscale)
+        x: width/2 * (1 + x_planet/xscale),
+        y: height/2 * (1 - y_planet/yscale)
     };
     if (nsteps % 1 === 0) {
         x_trail[trailAt] = pc.x;
