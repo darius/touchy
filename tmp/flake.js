@@ -44,7 +44,6 @@ function interact(canvas, report) {
     ctx.lineWidth = 8;
     ctx.lineCap = 'butt';
 
-    var offset = {x: canvas.offsetLeft, y: canvas.offsetTop};
     var points = [];
     var colors = ['rgba(255,255,255,0.2)'];
 
