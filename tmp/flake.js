@@ -10,7 +10,7 @@ function interact(canvas, report) {
     ctx.lineCap = 'butt';
 
     var endpoints = [];
-    var path = [];
+    var paths = [];
 
     function show() {
         ctx.clearRect(0, 0, width, height);
@@ -18,9 +18,9 @@ function interact(canvas, report) {
         ctx.translate(ox, oy);
         ctx.strokeStyle = 'rgba(255,255,255,0.2)';
         for (var i = 0; i < 6; ++i) {
-            drawPath();
+            drawPaths();
             ctx.scale(-1, 1);
-            drawPath();
+            drawPaths();
             ctx.rotate(Math.PI/6);
             ctx.scale(-1, 1);
             ctx.rotate(-Math.PI/6);
@@ -28,25 +28,28 @@ function interact(canvas, report) {
         ctx.restore();
     }
 
-    function drawPath() {
-        path.forEach(function(point, i) {
-            if (i === 0) return;
-            ctx.beginPath();
-            ctx.moveTo(path[i-1].x, path[i-1].y);
-            ctx.lineTo(point.x, point.y);
-            ctx.stroke();
+    function drawPaths() {
+        paths.forEach(function(path) {
+            path.forEach(function(point, i) {
+                if (i === 0) return;
+                ctx.beginPath();
+                ctx.moveTo(path[i-1].x, path[i-1].y);
+                ctx.lineTo(point.x, point.y);
+                ctx.stroke();
+            });
         });
     }
 
     function add(xy) {
         xy = {x: xy.x-ox,
               y: xy.y-oy};
-        path.push(xy);
+        paths[paths.length-1].push(xy);
         show();
     }
 
     function onMousedown(xy) {
         endpoints[0] = true;
+        paths.push([]);
         add(xy);
         event.preventDefault();
     }
@@ -54,12 +57,10 @@ function interact(canvas, report) {
     function onMousemove(xy) {
         if (endpoints[0] === void 0) return;
         add(xy);
-        event.preventDefault();
     }
 
     function onMouseup() {
         delete endpoints[0];
-        event.preventDefault();
     }
 
     canvas.addEventListener('mousedown', pointing.leftButtonOnly(pointing.mouseHandler(canvas, onMousedown)));
