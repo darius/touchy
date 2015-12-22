@@ -44,7 +44,7 @@ function interact(canvas, report) {
     ctx.lineWidth = 8;
     ctx.lineCap = 'butt';
 
-    var points = [];
+    var endpoints = [];
     var colors = ['rgba(255,255,255,0.2)'];
 
     function drawLine(start, end, color) {
@@ -80,19 +80,19 @@ function interact(canvas, report) {
     }
 
     function onMousedown(xy) {
-        points[0] = xy;
+        endpoints[0] = xy;
         event.preventDefault();
     }
 
     function onMousemove(xy) {
-        if (points[0] === void 0) return;
-        drawLine(points[0], xy, colors[0]);
-        points[0] = xy;
+        if (endpoints[0] === void 0) return;
+        drawLine(endpoints[0], xy, colors[0]);
+        endpoints[0] = xy;
         event.preventDefault();
     }
 
     function onMouseup() {
-        delete points[0];
+        delete endpoints[0];
         event.preventDefault();
     }
 
