@@ -153,9 +153,31 @@ function fingerpaint(canvas, report) {
         return msg;
     }
 
+    function onMousedown(xy) {
+        points[0] = xy;
+        event.preventDefault();
+    }
+
+    function onMousemove(xy) {
+        if (points[0] === void 0) return;
+        drawLine(points[0], xy, colors[0]);
+        points[0] = xy;
+        event.preventDefault();
+    }
+
+    function onMouseup() {
+        delete points[0];
+        event.preventDefault();
+    }
+
     canvas.addEventListener('touchstart', loudly(report, touchstart), false);
     canvas.addEventListener('touchmove', loudly(report, touchmove), false);    
     canvas.addEventListener('touchend', loudly(report, touchend), false);    
+
+    canvas.addEventListener('mousedown', pointing.leftButtonOnly(pointing.mouseHandler(canvas, onMousedown)));
+    canvas.addEventListener('mousemove', pointing.mouseHandler(canvas, onMousemove));
+    canvas.addEventListener('mouseup',   pointing.mouseHandler(canvas, onMouseup));
+
     report('Starting');
 }
 
