@@ -62,11 +62,9 @@ function interact(canvas, report) {
             segment(sx, sy, ex, ey);
 
             // Reflect on the x-axis.
-            if (true) {
-                sy = -sy;
-                ey = -ey; 
-                segment(sx, sy, ex, ey);
-            }
+            sy = -sy;
+            ey = -ey; 
+            segment(sx, sy, ex, ey);
 
             // Reflect on the other mirror.
             var sv = matApply(otherMirror, [sx, sy]);
