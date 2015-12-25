@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <head>
-  <title>Fingerpainter</title>
+  <title>Paint a flake</title>
   <style media="screen"> 
     canvas { border: 1px solid #444; }
   </style>
@@ -8,7 +8,11 @@
 <body bgcolor="black">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <canvas id="canvas" height="825" width="825"></canvas>
-  <div id="debug"></div>
+  <br><a id="permalink" href="">Permalink</a> to this one.
+  <script type="text/javascript">
+    var canvas = document.getElementById("canvas");
+    var permalink = document.getElementById("permalink");
+  </script>
   <script src="pointing.js"></script>
   <script src="flake.js"></script>
 </body>
