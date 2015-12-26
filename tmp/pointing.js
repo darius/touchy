@@ -15,17 +15,17 @@ function mouseCoords(canvas, event) {
 }
 
 function canvasCoords(canvas, pageX, pageY) {
-    const canvasBounds = canvas.getBoundingClientRect();
+    var canvasBounds = canvas.getBoundingClientRect();
     return {x: pageX - canvasBounds.left,
             y: pageY - canvasBounds.top};
 }
 
 function mouseHandler(canvas, handler) {
-    return event => handler(mouseCoords(canvas, event));
+    return function(event) { return handler(mouseCoords(canvas, event)); };
 }
 
 function leftButtonOnly(handler) {
-    return event => {
+    return function(event) {
         if (event.button === 0) { // left mouse button
             handler(event);
         }
@@ -33,10 +33,10 @@ function leftButtonOnly(handler) {
 }
 
 exports.pointing = {
-    touchCoords,
-    mouseCoords,
+    touchCoords: touchCoords,
+    mouseCoords: mouseCoords,
     //canvasCoords,
-    mouseHandler,
-    leftButtonOnly,
+    mouseHandler: mouseHandler,
+    leftButtonOnly: leftButtonOnly,
 };
 })(this);
