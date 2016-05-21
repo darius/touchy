@@ -63,7 +63,6 @@ function interact(canvas, paths) {
 
     function onMouseup() {
         delete endpoints[0];
-        console.log(paths.reduce((sum, a) => sum + a.length, 0));
     }
 
     canvas.addEventListener('mousedown', pointing.leftButtonOnly(pointing.mouseHandler(canvas, onMousedown)));
