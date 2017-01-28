@@ -12,13 +12,15 @@ function plots(ps, size) {
         plot(ps[i].x, ps[i].y, size);
 }
 
+const tau = 2*Math.PI;
+
 function plot(x, y, size) {
 //    console.log('plot' + show([{x:x, y:y}]));
-    const cx = width/2 + x * xscale;
+    const cx = width/2  + x * xscale;
     const cy = height/2 - y * yscale;
 //    console.log('canvas' + show([{x:cx, y:cy}]));
     ctx.beginPath();
-    ctx.arc(cx, cy, size, 0, 2*Math.PI, true);
+    ctx.arc(cx, cy, size, 0, tau, true);
     ctx.fill();
 }
 
@@ -45,19 +47,16 @@ function step() {
 }
 
 function addPoints(newpoints, pi, pj, pk, pm) {
-    const sects = intersections(pi, distance2(pi, pj),
-                                pk, distance2(pk, pm));
+    const sects = intersections(pi, distance(pi, pj),
+                                pk, distance(pk, pm));
     for (let i = 0; i < sects.length; ++i)
         if (!member(points, sects[i]) && !member(newpoints, sects[i]))
             newpoints.push(sects[i]);
 }
 
-function distance2(p, q) {
-    const dx = p.x - q.x;
-    const dy = p.y - q.y;
-//    console.log('distance2 ' + show([p]) + ', ' + show([q])
-//                + ' = ' + (dx*dx + dy*dy));
-    return dx*dx + dy*dy;
+function distance(p, q) {
+    return Math.hypot(p.x - q.x,
+                      p.y - q.y);
 }
 
 const epsilon = 1e-9;
@@ -72,10 +71,9 @@ function member(ps, p) {
 
 // Return a list of the points on both circle1 and circle2.
 // Pre: circle1 and circle2 are distinct
-function intersections(center1, rsquared1, center2, rsquared2) {
-    return circle_circle_intersection(
-        center1.x, center1.y, Math.sqrt(rsquared1),
-        center2.x, center2.y, Math.sqrt(rsquared2));
+function intersections(center1, r1, center2, r2) {
+    return circle_circle_intersection(center1.x, center1.y, r1,
+                                      center2.x, center2.y, r2);
 }
 
 // Ported from http://paulbourke.net/geometry/2circle/
