@@ -9,6 +9,8 @@
   </canvas>
 
   <script type="text/javascript">
+    'use strict';
+
     var element = document.getElementById("canvas");
     var width   = element.width;
     var height  = element.height;
@@ -20,6 +22,8 @@
 
   <script src="compassconstructions.js"></script>
   <script type="text/javascript">
+    'use strict';
+
     ctx.fillStyle = 'white';
     plots(points, 8);   console.log(points.length);
     plots(step(), 6);   console.log(points.length);
